@@ -13,15 +13,74 @@ library(tidymodels)
 library(openintro)
 ```
 
-### Exercise 1
+### Exercise 1-3
+```{R}
 
-Remove this text, and add your answer for Exercise 1 here.
-Add code chunks as needed.
-Don't forget to label your code chunk.
-Do not use spaces in code chunk labels.
 
-### Exercise 2
 
-...
+View(head(evals,10))
 
-Add exercise headings as needed.
+hist(evals2$score)
+
+evals2 %>%
+  ggplot( mapping=aes(x=score, y=bty_avg)) +
+  geom_point()+
+  stat_smooth(method=lm)
+
+evals2 %>%
+  ggplot( mapping=aes(x=score, y=bty_avg)) +
+  geom_jitter(width=0.4)+ # generating random varaible and jitter the dots. 
+  stat_smooth(method=lm)
+```
+
+### Exercise 4-8
+
+```{R}
+
+m_bty<-lm(score~bty_avg, evals2)
+summary(m_bty)
+
+evals2 %>%
+  ggplot( mapping=aes(x=score, y=bty_avg)) +
+  geom_point()+
+  stat_smooth(method=lm, se=FALSE, color="orange")
+```
+
+
+## Exercise 9-15
+
+```{r}
+
+m_gen<-lm(score~as.factor(gender), evals2)
+summary(m_gen)
+
+
+m_rank<-lm(score~as.factor(rank), evals2)
+summary(m_rank)
+
+
+m_rank<-lm(score~as.factor(rank), evals2)
+summary(m_rank)
+
+table(evals2$rank)
+
+ref_rank<-lm(score~relevel(as.factor(rank),ref="tenure track"), evals2)
+summary(ref_rank)
+
+#or, 
+
+#evals2<- evals2 %>%
+ # mutate(rank2=relevel(rank,ref="tenure #track"))
+
+
+evals2 <- evals2 %>%
+  mutate(tenure_eligible = case_when(
+    rank == "teaching" ~ "no",
+    rank == "tenure track" ~ "yes",
+    rank == "tenured" ~ "yes"
+  ))
+
+m_tenure_eligible<-lm(score~as.factor(tenure_eligible), evals2)
+summary(m_tenure_eligible)
+
+```
