@@ -2,7 +2,7 @@
 title: "Lab 09 - Grading the professor, Pt. 1"
 author: "Insert your name here"
 date: "Insert date here"
-output: github_document
+output: html_document
 ---
 
 ### Load packages and data
@@ -16,16 +16,21 @@ library(openintro)
 ### Exercise 1-3
 ```{R}
 
+evals2 <- evals
 
+print(head(evals2,10))
 
-View(head(evals,10))
-
+## 1
 hist(evals2$score)
+
+##2
 
 evals2 %>%
   ggplot( mapping=aes(x=score, y=bty_avg)) +
   geom_point()+
   stat_smooth(method=lm)
+
+##3
 
 evals2 %>%
   ggplot( mapping=aes(x=score, y=bty_avg)) +
@@ -36,25 +41,36 @@ evals2 %>%
 ### Exercise 4-8
 
 ```{R}
-
+##4
 m_bty<-lm(score~bty_avg, evals2)
 summary(m_bty)
 
+##5,6, 7, 8 
 evals2 %>%
   ggplot( mapping=aes(x=score, y=bty_avg)) +
   geom_point()+
   stat_smooth(method=lm, se=FALSE, color="orange")
 ```
 
+Model R^2 = 0.035
+this model explain the 3.5% of the total variance. 
+
+bty_avg is significant predictor for the score.
+intercept is 3.388
+This meas that if the bty_avg=0, the score is 3.88034
+
+
+
+
 
 ## Exercise 9-15
 
 ```{r}
-
+##9
 m_gen<-lm(score~as.factor(gender), evals2)
 summary(m_gen)
 
-
+##10
 m_rank<-lm(score~as.factor(rank), evals2)
 summary(m_rank)
 
@@ -64,13 +80,14 @@ summary(m_rank)
 
 table(evals2$rank)
 
-ref_rank<-lm(score~relevel(as.factor(rank),ref="tenure track"), evals2)
+##11
+
+evals2<-evals2 %>%
+  mutate(rankre = relevel(rank,ref="tenure track" ))
+
+ref_rank<-lm(score~ rankre, evals2)
 summary(ref_rank)
 
-#or, 
-
-#evals2<- evals2 %>%
- # mutate(rank2=relevel(rank,ref="tenure #track"))
 
 
 evals2 <- evals2 %>%
@@ -84,3 +101,22 @@ m_tenure_eligible<-lm(score~as.factor(tenure_eligible), evals2)
 summary(m_tenure_eligible)
 
 ```
+male
+4.092982 + 0.14151
+female 4.092982 + 0 
+
+teaching: 4.28 + 0
+tenured: 4.28 - 0.12968
+tenured track : 4.28-0.14518
+
+tenure track = 4.15 
+teacing = 4.15+0.129
+tenured = 4.15-0.01550
+
+
+R^2=0.01
+this model explain 1% of the variance in the DV 
+No  = 4.28
+Yes = 4.28 - 0.1406
+
+
